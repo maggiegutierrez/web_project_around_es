@@ -92,10 +92,10 @@ let formElement = document.querySelector("#edit-profile-form");
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
-  let nameInput = formElement.querySelector(".popup__input_type_name");
+  let nombreInput = formElement.querySelector(".popup__input_type_name");
   let jobInput = formElement.querySelector(".popup__input_type_description");
 
-  const nameUpdated = nameInput.value;
+  const nameUpdated = nombreInput.value;
   const jobUpdated = jobInput.value;
 
   profileTitle.textContent = nameUpdated;
@@ -106,7 +106,7 @@ function handleProfileFormSubmit(evt) {
 
 formElement.addEventListener("submit", handleProfileFormSubmit);
 
-function getCardElement() {
+function getCardElement(name, link) {
   const cardElement = cardTemplate.cloneNode(true);
   const cardTitle = cardElement.querySelector(".card__title");
   const cardImage = cardElement.querySelector(".card__image");
@@ -120,11 +120,11 @@ function getCardElement() {
     cardElement.remove();
   });
 
-  cardImage.addEventListener("click", function (evt) {
+  cardImage.addEventListener("click", function () {
     openModal(imagePopup);
+    cardTitlePopup.textContent = cardTitle.textContent;
     cardPopupImage.alt = cardTitle.textContent;
     cardPopupImage.src = cardImage.src;
-    cardTitlePopup.textContent = cardTitle.textContent;
   });
 
   cardTitle.textContent = name;
@@ -172,51 +172,51 @@ function handleCardFormSubmit(evt) {
 
 cardFormElement.addEventListener("submit", handleCardFormSubmit);
 
-const forms = document.querySelectorAll(".popup__form");
-const inputs = forms.querySelectorAll(".popup__input");
-const saveButton = forms.querySelectorAll(".popup__button");
-
-const showInputError = (inputElement, errorMessage) => {
-  const errorElement = forms.querySelector(`.${inputElement.id}-input-error`);
-  inputElement.classList.add("popup__input_type_error");
+//VALIDATION
+const showInputError = (form, input, errorMessage) => {
+  const errorElement = form.querySelector(`.${input.id}-input-error`);
+  input.classList.add("popup__input_type_error");
   errorElement.textContent = errorMessage;
   errorElement.classList.add("popup__input-error_active");
 };
 
-const hideInputError = (inputElement) => {
-  const errorElement = form.querySelector(`.${inputElement.id}-input-error`);
-  inputElement.classList.remove("popup__input_type_error");
+const hideInputError = (form, input) => {
+  const errorElement = form.querySelector(`.${input.id}-input-error`);
+  input.classList.remove("popup__input_type_error");
   errorElement.textContent = "";
   errorElement.classList.remove("popup__input-error_active");
 };
 
-function toggleButtonState() {
+function toggleButtonState(form, inputs, button) {
   const allValid = Array.from(inputs).every((input) => input.validity.valid);
-  saveButton.disabled = !allValid;
+  button.disabled = !allValid;
 }
 
-inputs.forEach(function (input) {
-  input.addEventListener("input", function () {
-    if (!input.validity.valid) {
-      showInputError(input, input.validationMessage);
-    } else {
-      hideInputError(input);
-    }
-    toggleButtonState();
-  });
-});
-
-forms.addEventListener("submit", (event) => {
-  let formValid = true;
+document.querySelectorAll(".popup__form").forEach((form) => {
+  const inputs = form.querySelectorAll(".popup__input");
+  const button = form.querySelector(".popup__button");
 
   inputs.forEach((input) => {
-    if (!input.validity.valid) {
-      showInputError(input, input.validationMessage);
-      formValid = false;
-    }
+    input.addEventListener("input", () => {
+      if (!input.validity.valid) {
+        showInputError(form, input, input.validationMessage);
+      } else {
+        hideInputError(form, input);
+      }
+      toggleButtonState(form, Array.from(inputs), button);
+    });
   });
 
-  if (!formValid) {
-    event.preventDefault();
-  }
+  form.addEventListener("submit", (evt) => {
+    let valid = true;
+
+    inputs.forEach((input) => {
+      if (!input.validity.valid) {
+        showInputError(form, input, input.validationMessage);
+        valid = false;
+      }
+    });
+
+    if (!valid) evt.preventDefault();
+  });
 });
