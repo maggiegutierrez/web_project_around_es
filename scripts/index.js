@@ -106,10 +106,7 @@ function handleProfileFormSubmit(evt) {
 
 formElement.addEventListener("submit", handleProfileFormSubmit);
 
-function getCardElement(
-  name = "Sin título",
-  link = "./images/placeholder.jpg"
-) {
+function getCardElement() {
   const cardElement = cardTemplate.cloneNode(true);
   const cardTitle = cardElement.querySelector(".card__title");
   const cardImage = cardElement.querySelector(".card__image");
@@ -117,6 +114,7 @@ function getCardElement(
   cardLikeButton.addEventListener("click", function (evt) {
     evt.target.classList.toggle("card__like-button_is-active");
   });
+
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
   cardDeleteButton.addEventListener("click", function () {
     cardElement.remove();
@@ -173,3 +171,52 @@ function handleCardFormSubmit(evt) {
 }
 
 cardFormElement.addEventListener("submit", handleCardFormSubmit);
+
+const forms = document.querySelectorAll(".popup__form");
+const inputs = forms.querySelectorAll(".popup__input");
+const saveButton = forms.querySelectorAll(".popup__button");
+
+const showInputError = (inputElement, errorMessage) => {
+  const errorElement = forms.querySelector(`.${inputElement.id}-input-error`);
+  inputElement.classList.add("popup__input_type_error");
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add("popup__input-error_active");
+};
+
+const hideInputError = (inputElement) => {
+  const errorElement = form.querySelector(`.${inputElement.id}-input-error`);
+  inputElement.classList.remove("popup__input_type_error");
+  errorElement.textContent = "";
+  errorElement.classList.remove("popup__input-error_active");
+};
+
+function toggleButtonState() {
+  const allValid = Array.from(inputs).every((input) => input.validity.valid);
+  saveButton.disabled = !allValid;
+}
+
+inputs.forEach(function (input) {
+  input.addEventListener("input", function () {
+    if (!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+    } else {
+      hideInputError(input);
+    }
+    toggleButtonState();
+  });
+});
+
+forms.addEventListener("submit", (event) => {
+  let formValid = true;
+
+  inputs.forEach((input) => {
+    if (!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+      formValid = false;
+    }
+  });
+
+  if (!formValid) {
+    event.preventDefault();
+  }
+});
