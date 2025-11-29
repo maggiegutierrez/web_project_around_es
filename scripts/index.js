@@ -219,3 +219,18 @@ document.querySelectorAll(".popup__form").forEach((form) => {
     if (!valid) evt.preventDefault();
   });
 });
+
+document.addEventListener("keydown", (evt) => {
+  if (evt.key === "Escape") {
+    const openPopup = document.querySelector(".popup_is-opened");
+    if (openPopup) {
+      closeModal(openPopup);
+    }
+  }
+});
+
+document.addEventListener("mousedown", (evt) => {
+  if (evt.target.classList.contains("popup_is-opened")) {
+    closeModal(evt.target);
+  }
+});
