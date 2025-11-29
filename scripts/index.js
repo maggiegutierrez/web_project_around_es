@@ -172,7 +172,6 @@ function handleCardFormSubmit(evt) {
 
 cardFormElement.addEventListener("submit", handleCardFormSubmit);
 
-//VALIDATION
 const showInputError = (form, input, errorMessage) => {
   const errorElement = form.querySelector(`.${input.id}-input-error`);
   input.classList.add("popup__input_type_error");
