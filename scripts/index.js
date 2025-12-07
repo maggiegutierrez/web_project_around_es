@@ -80,6 +80,7 @@ function handleOpenEditModal(evt) {
 editProfileButton.addEventListener("click", handleOpenEditModal);
 
 closeProfileButton.addEventListener("click", function () {
+  resetFormErrors(formElement);
   closeModal(editProfilePopup);
 });
 
@@ -140,11 +141,11 @@ function renderCard(name, link, container) {
 }
 
 initialCards.forEach(function (card) {
-  console.log(card.name);
   renderCard(card.name, card.link, cardContainer);
 });
 
 plusButton.addEventListener("click", function () {
+  resetFormErrors(cardFormElement);
   openModal(plusButtonPopup);
 });
 
@@ -168,6 +169,8 @@ function handleCardFormSubmit(evt) {
   renderCard(titleValue, linkValue, cardContainer);
   closeModal(plusButtonPopup);
   cardFormElement.reset();
+
+  resetFormErrors(cardFormElement);
 }
 
 cardFormElement.addEventListener("submit", handleCardFormSubmit);
@@ -224,6 +227,9 @@ document.addEventListener("keydown", (evt) => {
   if (evt.key === "Escape") {
     const openPopup = document.querySelector(".popup_is-opened");
     if (openPopup) {
+      const form = openPopup.querySelector(".popup__form");
+      if (form) resetFormErrors(form);
+
       closeModal(openPopup);
     }
   }
@@ -231,6 +237,24 @@ document.addEventListener("keydown", (evt) => {
 
 document.addEventListener("mousedown", (evt) => {
   if (evt.target.classList.contains("popup_is-opened")) {
+    const form = evt.target.querySelector(".popup__form");
+    if (form) resetFormErrors(form);
+
     closeModal(evt.target);
   }
 });
+
+function resetFormErrors(form) {
+  const inputs = form.querySelectorAll(".popup__input");
+  const button = form.querySelector(".popup__button");
+
+  inputs.forEach((input) => {
+    hideInputError(form, input);
+  });
+
+  if (button) {
+    button.disabled = true;
+  }
+
+  form.reset();
+}
