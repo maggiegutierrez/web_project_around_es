@@ -1,3 +1,7 @@
+import Card from "./Card.js";
+import FormValidator from "./FormValidator.js";
+import { openModal, closeModal, resetFormErrors } from "./utils.js";
+
 const initialCards = [
   {
     name: "Valle de Yosemite",
@@ -25,7 +29,40 @@ const initialCards = [
   },
 ];
 
-const editProfileButton = document.querySelector(".profile__edit-button");
+const selectors = {
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__input-error_active",
+};
+
+const cardContainer = document.querySelector(".cards__list");
+
+const imagePopup = document.querySelector("#image-popup");
+const popupImage = imagePopup.querySelector(".popup__image");
+const cardTitlePopup = imagePopup.querySelector(".popup__caption");
+
+function handleImageClick(name, link) {
+  cardTitlePopup.textContent = name;
+  popupImage.alt = name;
+  popupImage.src = link;
+  openModal(imagePopup);
+}
+
+initialCards.forEach(function (data) {
+  const card = new Card(data, "#card-template", handleImageClick);
+  cardContainer.append(card.generateCard());
+});
+
+const forms = document.querySelectorAll(".popup__form");
+
+forms.forEach((form) => {
+  const formValidator = new FormValidator(selectors, form);
+  formValidator.setEventListeners();
+});
+
+//---------------------------------------------COMENTAR
+/*const editProfileButton = document.querySelector(".profile__edit-button");
 const editProfilePopup = document.querySelector("#edit-popup");
 const closeProfileButton = editProfilePopup.querySelector(".popup__close");
 
@@ -36,7 +73,6 @@ const descriptionInput = editProfilePopup.querySelector(
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
-const cardContainer = document.querySelector(".cards__list");
 const cardTemplate = document
   .querySelector("#card-template")
   .content.querySelector(".card");
@@ -53,12 +89,10 @@ const newPlaceLinkInput = plusButtonPopup.querySelector(
   ".popup__input_type_url"
 );
 
-const imagePopup = document.querySelector("#image-popup");
 const closeImagePopup = imagePopup.querySelector(".popup__close");
-const cardPopupImage = imagePopup.querySelector(".popup__image");
-const cardTitlePopup = imagePopup.querySelector(".popup__caption");
+const popupImage = imagePopup.querySelector(".popup__image");
 
-function openModal(popup) {
+/*function openModal(popup) {
   popup.classList.add("popup_is-opened");
 }
 function closeModal(popup) {
@@ -140,10 +174,6 @@ function renderCard(name, link, container) {
   container.append(newCard);
 }
 
-initialCards.forEach(function (card) {
-  renderCard(card.name, card.link, cardContainer);
-});
-
 plusButton.addEventListener("click", function () {
   resetFormErrors(cardFormElement);
   openModal(plusButtonPopup);
@@ -175,7 +205,7 @@ function handleCardFormSubmit(evt) {
 
 cardFormElement.addEventListener("submit", handleCardFormSubmit);
 
-const showInputError = (form, input, errorMessage) => {
+/*const showInputError = (form, input, errorMessage) => {
   const errorElement = form.querySelector(`.${input.id}-input-error`);
   input.classList.add("popup__input_type_error");
   errorElement.textContent = errorMessage;
@@ -257,4 +287,4 @@ function resetFormErrors(form) {
   }
 
   form.reset();
-}
+}*/
