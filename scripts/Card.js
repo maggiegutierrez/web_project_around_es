@@ -1,8 +1,9 @@
-export default class Card {
+class Card {
   constructor(data, templateSelector, handleImageClick) {
-    this._text = data.name;
+    this._title = data.name;
     this._link = data.link;
     this._templateSelector = templateSelector;
+
     this._handleImageClick = handleImageClick;
   }
 
@@ -15,38 +16,35 @@ export default class Card {
     return cardElement;
   }
 
-  _handleLikeButton = () => {
-    this._likeButton.classList.toggle("card__like-button_is-active");
-  };
-
-  _handleDeleteButton = () => {
-    this._element.remove();
-  };
-
-  _handleImage = () => {
-    this._handleImageClick(this._text, this._link);
-  };
-
   _setEventListeners() {
-    this._likeButton.addEventListener("click", this._handleLikeButton);
-    this._deleteButton.addEventListener("click", this._handleDeleteButton);
-    this._image.addEventListener("click", this._handleImage);
+    this._likeButton.addEventListener("click", () => {
+      this._likeButton.classList.toggle("card__like-button_is-active");
+    });
+
+    this._deleteButton.addEventListener("click", () => {
+      this._element.remove();
+    });
+
+    this._cardImage.addEventListener("click", () => {
+      this._handleImageClick(this._title, this._link);
+    });
   }
 
-  generateCard() {
+  createCard() {
     this._element = this._getTemplate();
-    this._image = this._element.querySelector(".card__image");
-    this._deleteButton = this._element.querySelector(".card__delete-button");
-    this._likeButton = this._element.querySelector(".card__like-button");
+    this._cardImage = this._element.querySelector(".card__image");
+    this._deleteButton = this._element.querySelector(".card__delete-button"); //<button>
+    this._cardTitle = this._element.querySelector(".card__title");
+    this._likeButton = this._element.querySelector(".card__like-button"); //button
 
-    this._image.src = this._link;
-    this._image.alt = this._text;
-
-    const title = this._element.querySelector(".card__title");
-    title.textContent = this._text;
+    this._cardTitle.textContent = this._title;
+    this._cardImage.src = this._link;
+    this._cardImage.alt = this._title;
 
     this._setEventListeners();
 
     return this._element;
   }
 }
+
+export default Card;
