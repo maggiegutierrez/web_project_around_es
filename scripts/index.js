@@ -41,9 +41,9 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
 const cardContainer = document.querySelector(".cards__list");
-const cardTemplate = document
+/*const cardTemplate = document
   .querySelector("#card-template") //<template id="card-template">
-  .content.querySelector(".card");
+  .content.querySelector(".card");*/
 
 const plusButton = document.querySelector(".profile__add-button");
 const plusButtonPopup = document.querySelector("#new-card-popup"); //  <div class="popup" id="new-card-popup">
@@ -192,3 +192,7 @@ document.addEventListener("mousedown", (evt) => {
     }
   }
 });
+
+/*
+const newCard = new Section({}, "cardContainer");
+*/

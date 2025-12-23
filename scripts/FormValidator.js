@@ -6,6 +6,7 @@ class FormValidator {
     this._inactiveButtonClass = config.inactiveButtonClass;
     this._inputErrorClass = config.inputErrorClass;
     this._errorClass = config.errorClass;
+    console.log(config);
   }
   //DUDA SOBRE QUE SEGÚN YO errorElement ES LO MISMO QUE inputElement ??????
   _showInputError = (inputElement, errorMessage) => {
@@ -13,7 +14,9 @@ class FormValidator {
       `.${inputElement.id}-input-error`
     );
     inputElement.classList.add(this._inputErrorClass);
+    console.log(this._inputErrorClass); //popup__input_type_error
     errorElement.textContent = errorMessage;
+    //console.log(errorMessages, "errorMessage");
     errorElement.classList.add(this._errorClass);
   };
 
