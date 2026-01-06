@@ -1,6 +1,7 @@
-import Card from "./Card.js";
-import FormValidator from "./FormValidator.js";
-import { openModal, closeModal } from "./utils.js";
+import Card from "../components/Card.js";
+import FormValidator from "../components/FormValidator.js";
+import Popup from "../components/Popup.js";
+import PopupWithForm from "../components/PopupWithForm.js";
 
 const initialCards = [
   {
@@ -28,32 +29,58 @@ const initialCards = [
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lago.jpg",
   },
 ];
-
+/*----PROFILE CONSTS----*/
+/*FORM BUTTONS*/
 const editProfileButton = document.querySelector(".profile__edit-button");
 const editProfilePopup = document.querySelector("#edit-popup");
 const closeProfileButton = editProfilePopup.querySelector(".popup__close");
-
-const nameInput = editProfilePopup.querySelector(".popup__input_type_name");
+const profileForm = document.querySelector("#edit-profile-form");
+/*FORM INPUTS*/
+/*const nameInput = editProfilePopup.querySelector(".popup__input_type_name");
 const descriptionInput = editProfilePopup.querySelector(
   ".popup__input_type_description"
-);
+); */
+/*PROFILE VIEW*/
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
+/*----CARD CONSTS----*/
+/*CONTAINER, POPUP & BUTTONS*/
 const cardContainer = document.querySelector(".cards__list");
-/*const cardTemplate = document
-  .querySelector("#card-template") //<template id="card-template">
-  .content.querySelector(".card");*/
-
 const plusButton = document.querySelector(".profile__add-button");
-const plusButtonPopup = document.querySelector("#new-card-popup"); //  <div class="popup" id="new-card-popup">
-const closePlusButton = plusButtonPopup.querySelector(".popup__close");
-const createCardButton = plusButtonPopup.querySelector(".popup__button");
+const cardPopup = document.querySelector("#new-card-popup");
+const closeCardPopup = cardPopup.querySelector(".popup__close");
+const createCardButton = cardPopup.querySelector(".popup__button");
+/*CLICK IMAGE & BUTTONS*/
+const imageViewPopup = document.querySelector("#image-popup");
+const closeimageViewPopup = imageViewPopup.querySelector(".popup__close");
+const cardPopupImage = imageViewPopup.querySelector(".popup__image");
+const cardPopupCaption = imageViewPopup.querySelector(".popup__caption");
 
-const imagePopup = document.querySelector("#image-popup");
-const closeImagePopup = imagePopup.querySelector(".popup__close");
-const cardPopupImage = imagePopup.querySelector(".popup__image");
-const cardTitlePopup = imagePopup.querySelector(".popup__caption");
+const cardFormElement = new PopupWithForm(createCardButton, "#new-card-form");
+/*const newPlaceNameInput = cardFormElement.querySelector(
+ ".popup__input_type_card-name"
+);
+const newPlaceLinkInput = cardFormElement.querySelector(
+  ".popup__input_type_url"
+);
+*/
+const inputsData = {
+  nameInput: ".popup__input_type_name",
+  descriptionInput: ".popup__input_type_description",
+  titleInput: ".popup__input_type_card-name",
+  linkInput: ".popup__input_type_url",
+};
+
+const popup = new Popup(".popup");
+
+const handleImageClick = (title, link) => {
+  cardPopupCaption.textContent = title;
+  cardPopupImage.alt = title;
+  cardPopupImage.src = link;
+
+  popup.open(imageViewPopup);
+};
 
 function fillProfileForm() {
   nameInput.value = profileTitle.textContent;
@@ -63,51 +90,40 @@ function fillProfileForm() {
 function handleOpenEditModal(evt) {
   evt.preventDefault();
   fillProfileForm();
-  openModal(editProfilePopup);
+  popup.open(editProfilePopup);
 }
 
 editProfileButton.addEventListener("click", handleOpenEditModal);
 
 closeProfileButton.addEventListener("click", function () {
   profileFormValidator.resetValidation();
-  closeModal(editProfilePopup);
+  popup.close(editProfilePopup);
 });
 
-closeImagePopup.addEventListener("click", function () {
-  closeModal(imagePopup);
+closeimageViewPopup.addEventListener("click", function () {
+  popup.close(imageViewPopup);
 });
 
 plusButton.addEventListener("click", function () {
   cardFormValidator.resetValidation();
   cardFormElement.reset();
-  openModal(plusButtonPopup);
+  popup.open(cardPopup);
 });
 
-closePlusButton.addEventListener("click", function () {
-  closeModal(plusButtonPopup);
+closeCardPopup.addEventListener("click", function () {
+  popup.close(cardPopup);
 });
 
-const handleImageClick = (title, link) => {
-  cardTitlePopup.textContent = title;
-  cardPopupImage.alt = title;
-  cardPopupImage.src = link;
-
-  openModal(imagePopup);
-};
-
-initialCards.forEach((data) => {
+/*initialCards.forEach((data) => {
   const card = new Card(data, "#card-template", handleImageClick);
   const cardElement = card.createCard();
   cardContainer.append(cardElement);
-});
+});*/
 
-const cardFormElement = document.querySelector("#new-card-form");
-const newPlaceNameInput = cardFormElement.querySelector(
-  ".popup__input_type_card-name"
-);
-const newPlaceLinkInput = cardFormElement.querySelector(
-  ".popup__input_type_url"
-);
+/*const data = {
+  name: newPlaceNameInput.value,
+  link: newPlaceLinkInput.value,
+};*/
 
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
@@ -122,10 +138,10 @@ function handleCardFormSubmit(evt) {
 
   cardContainer.prepend(cardElement);
   cardFormElement.reset();
-  closeModal(plusButtonPopup);
+  popup.close(cardPopup);
 }
 
-cardFormElement.addEventListener("submit", handleCardFormSubmit);
+//cardFormElement.addEventListener("submit", handleCardFormSubmit);
 
 const validationConfig = {
   inputSelector: ".popup__input",
@@ -135,8 +151,7 @@ const validationConfig = {
   errorClass: "popup__input-error_active",
 };
 
-const formElement = document.querySelector("#edit-profile-form");
-const profileFormValidator = new FormValidator(validationConfig, formElement);
+const profileFormValidator = new FormValidator(validationConfig, profileForm);
 const cardFormValidator = new FormValidator(validationConfig, cardFormElement);
 
 profileFormValidator.setEventListeners();
@@ -145,8 +160,8 @@ cardFormValidator.setEventListeners();
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
-  let nombreInput = formElement.querySelector(".popup__input_type_name");
-  let jobInput = formElement.querySelector(".popup__input_type_description");
+  let nombreInput = profileForm.querySelector(".popup__input_type_name");
+  let jobInput = profileForm.querySelector(".popup__input_type_description");
 
   const nameUpdated = nombreInput.value;
   const jobUpdated = jobInput.value;
@@ -154,45 +169,21 @@ function handleProfileFormSubmit(evt) {
   profileTitle.textContent = nameUpdated;
   profileDescription.textContent = jobUpdated;
 
-  closeModal(editProfilePopup);
+  popup.close(editProfilePopup);
 }
 
-formElement.addEventListener("submit", handleProfileFormSubmit);
+profileForm.addEventListener("submit", handleProfileFormSubmit);
 
-document.addEventListener("keydown", (evt) => {
-  if (evt.key === "Escape") {
-    const openPopup = document.querySelector(".popup_is-opened");
-    if (openPopup) {
-      closeModal(openPopup);
+const defaultCard = new Section(
+  {
+    initialCards,
+    renderer: (item) => {
+      const card = new Card(item, "#card-template", handleImageClick);
+      const cardElement = card.createCard();
+      defaultCard.addItem(cardElement);
+    },
+  },
+  "cardContainer"
+);
 
-      if (openPopup.id === "edit-popup") {
-        profileFormValidator.resetValidation();
-      }
-
-      if (openPopup.id === "new-card-popup") {
-        cardFormValidator.resetValidation();
-        cardFormElement.reset();
-      }
-    }
-  }
-});
-
-document.addEventListener("mousedown", (evt) => {
-  const openPopup = document.querySelector(".popup_is-opened");
-  if (openPopup && evt.target === openPopup) {
-    closeModal(openPopup);
-
-    if (openPopup.id === "edit-popup") {
-      profileFormValidator.resetValidation();
-    }
-
-    if (openPopup.id === "new-card-popup") {
-      cardFormValidator.resetValidation();
-      cardFormElement.reset();
-    }
-  }
-});
-
-/*
-const newCard = new Section({}, "cardContainer");
-*/
+const newCard = new Card(data, "#card-template, handleImageClick");

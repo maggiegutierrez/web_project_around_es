@@ -1,4 +1,4 @@
-class Card {
+export default class Card {
   constructor(data, templateSelector, handleImageClick) {
     this._title = data.name;
     this._link = data.link;
@@ -33,9 +33,9 @@ class Card {
   createCard() {
     this._element = this._getTemplate();
     this._cardImage = this._element.querySelector(".card__image");
-    this._deleteButton = this._element.querySelector(".card__delete-button"); //<button>
+    this._deleteButton = this._element.querySelector(".card__delete-button"); //X-button
     this._cardTitle = this._element.querySelector(".card__title");
-    this._likeButton = this._element.querySelector(".card__like-button"); //button
+    this._likeButton = this._element.querySelector(".card__like-button"); //<3-button
 
     this._cardTitle.textContent = this._title;
     this._cardImage.src = this._link;
@@ -46,5 +46,3 @@ class Card {
     return this._element;
   }
 }
-
-export default Card;
