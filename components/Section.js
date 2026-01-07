@@ -2,7 +2,7 @@ export default class Section {
   constructor({ items, renderer }, containerSelector) {
     this._items = items; //array de datos iniciales
     this._renderer = renderer; //encargado de crear y renderizar los datos de una página
-    this._container = document.querySelector(containerSelector); //selector CSS del contenedor donde se van a agregar los elementos
+    this._container = containerSelector; //selector CSS del contenedor donde se van a agregar los elementos
   }
 
   addItem(item) {

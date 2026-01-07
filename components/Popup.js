@@ -1,7 +1,7 @@
 export default class Popup {
   constructor(popupSelector) {
     this._popup = document.querySelector(popupSelector);
-    //this._handleEscClose = this._handleEscClose.bind(this);
+    this._handleEscClose = this._handleEscClose.bind(this);
   }
 
   open() {
@@ -25,10 +25,6 @@ export default class Popup {
       if (evt.target === this._popup) {
         this.close();
       }
-    });
-
-    this._popup.querySelector(".popup__close").addEventListener("click", () => {
-      this.close();
     });
 
     // nota: el boton de cerrar (X) lo manejo en index.js para poder agregar cosas como resetValidation

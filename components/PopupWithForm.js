@@ -4,20 +4,11 @@ export default class PopupWithForm extends Popup {
   constructor(callback, popupSelector) {
     super(popupSelector);
     this._callback = callback; //envío del formulario
-    this._form = this._popup.querySelector(".popup__form");
-    this._nameInput = popupSelector.nameInput;
-    this._descriptionInput = popupSelector.descriptionInput;
-    this._titleInput = popupSelector.titleInput;
-    this._linkInput = popupSelector.linkInput;
+    //this._form = this._popup.querySelector(".popup__form");
   }
 
   _getInputValues() {
-    return {
-      name: this._nameInput.value,
-      description: this._descriptionInput.value,
-      title: this._titleInput.value,
-      link: this._linkInput.value,
-    };
+    const values = {};
   }
 
   setEventListeners() {
@@ -26,12 +17,16 @@ export default class PopupWithForm extends Popup {
       evt.preventDefault();
       this.close();
     });
+
+    this._popup.querySelector(".popup__close").addEventListener("click", () => {
+      this.close();
+    });
     //agregar un controlador de eventos submit y el detector de eventos click en el icono para cerrar
   }
 
   close() {
     super.close();
-    this._form.reset();
-    //X.reset();
+    this._popup.reset();
+    //this._form.reset();
   }
 }
