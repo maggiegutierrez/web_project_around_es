@@ -1,7 +1,8 @@
 import Card from "../components/Card.js";
 import FormValidator from "../components/FormValidator.js";
-//import Popup from "../components/Popup.js";
+import Popup from "../components/Popup.js";
 import PopupWithForm from "../components/PopupWithForm.js";
+import PopupWithImage from "../components/PopupWithImage.js";
 import Section from "../components/Section.js";
 import UserInfo from "../components/UserInfo.js";
 
@@ -31,6 +32,9 @@ const initialCards = [
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lago.jpg",
   },
 ];
+
+const popup = new Popup(".popup");
+
 /*----PROFILE CONSTS----*/
 /*FORM BUTTONS*/
 const editProfileButton = document.querySelector(".profile__edit-button");
@@ -71,51 +75,55 @@ function submitCardForm(formData) {
   console.log(formData.title);
 }
 
-const cardFormElement = new PopupWithForm(submitCardForm, "#new-card-popup");
-const profileFormElement = new PopupWithForm(submitProfileForm, "#edit-popup");
+const cardFormPopup = new PopupWithForm(submitCardForm, "#new-card-popup");
+const profileFormPopup = new PopupWithForm(submitProfileForm, "#edit-popup");
+const imagePopup = new PopupWithImage("#image-popup");
 
-const handleImageClick = (title, link) => {
+cardFormPopup.setEventListeners();
+profileFormPopup.setEventListeners();
+
+const handleCardClick = (title, link) => {
   cardPopupCaption.textContent = title;
   cardPopupImage.alt = title;
   cardPopupImage.src = link;
 
-  popup.open(imageViewPopup);
+  imageViewPopup.open();
 };
 const profileData = {
-  name: profileTitle,
-  description: profileDescription,
+  name: nameInput,
+  description: descriptionInput,
 };
 
 const fillProfileForm = () => {
-  const newUser = new UserInfo(nameInput, descriptionInput);
+  const newUser = new UserInfo({ profileTitle, profileDescription });
   newUser.setUserInfo(profileData);
 };
 
 function handleOpenEditModal(evt) {
   evt.preventDefault();
   fillProfileForm();
-  popup.open(editProfilePopup);
+  popup.open();
 }
 
 editProfileButton.addEventListener("click", handleOpenEditModal);
 
 closeProfileButton.addEventListener("click", function () {
   profileFormValidator.resetValidation();
-  popup.close(editProfilePopup);
+  editProfilePopup.close();
 });
 
 closeimageViewPopup.addEventListener("click", function () {
-  popup.close(imageViewPopup);
+  imageViewPopup.close();
 });
 
 plusButton.addEventListener("click", function () {
   cardFormValidator.resetValidation();
   cardForm.reset();
-  popup.open(cardPopup);
+  cardPopup.open();
 });
 
 closeCardPopup.addEventListener("click", function () {
-  popup.close(cardPopup);
+  cardPopup.close();
 });
 
 const validationConfig = {
@@ -136,7 +144,7 @@ const defaultCard = new Section(
   {
     items: initialCards,
     renderer: (item) => {
-      const card = new Card(item, "#card-template", handleImageClick);
+      const card = new Card(item, "#card-template", handleCardClick);
       const cardElement = card.createCard();
       defaultCard.addItem(cardElement);
     },
@@ -150,7 +158,7 @@ const newCard = new Section(
   {
     items: data, //falta por definir qué será mi data
     renderer: (data) => {
-      const card = new Card(data, "#card-template", handleImageClick);
+      const card = new Card(data, "#card-template", handleCardClick);
       const cardElement = card.createCard();
       newCard.addItem(cardElement);
     },
@@ -158,4 +166,4 @@ const newCard = new Section(
   cardContainer
 );
 
-//newCard.renderer(); Aún no sé si se debería usar
+newCard.renderer();
