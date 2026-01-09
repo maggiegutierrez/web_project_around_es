@@ -1,9 +1,10 @@
 import Popup from "./Popup.js";
 
 export default class PopupWithForm extends Popup {
-  constructor(callback, popupSelector) {
+  constructor(callback, popupSelector, callbackOpen) {
     super(popupSelector);
     this._callback = callback; //envío del formulario
+    this._callbackOpen = callbackOpen;
     this._form = popupSelector.querySelector(".popup__form");
   }
 
@@ -20,17 +21,20 @@ export default class PopupWithForm extends Popup {
     super.setEventListeners();
     this._form.addEventListener("submit", (evt) => {
       evt.preventDefault();
-      this._callback(this._getInputValues()); //Revisar si es mejor hacerlo en dos pasos "const x = this._getInputValues()..." o sí así directo
+      this._callback(this._getInputValues());
       this.close();
     });
+  }
 
-    this._popup
-      .querySelector(".popup__close")
-      .addEventListener("click", (evt) => {
-        evt.preventDefault();
-        this.close();
+  open() {
+    super.open();
+    if (this._callbackOpen) {
+      let inputData = this._callbackOpen();
+      const inputList = this._form.querySelectorAll(".popup__input");
+      inputList.forEach((input) => {
+        input.value = inputData[input.name];
       });
-    //agregar un controlador de eventos submit y el detector de eventos click en el icono para cerrar
+    }
   }
 
   close() {

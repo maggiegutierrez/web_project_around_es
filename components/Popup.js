@@ -1,20 +1,16 @@
 export default class Popup {
   constructor(popupSelector) {
-    this._popup = document.querySelectorAll(popupSelector);
+    this._popup = popupSelector;
     this._handleEscClose = this._handleEscClose.bind(this);
   }
 
   open() {
-    this._popup.forEach((popup) => {
-      popup.classList.add("popup_is-opened");
-    });
+    this._popup.classList.add("popup_is-opened");
     document.addEventListener("keydown", this._handleEscClose);
   }
 
   close() {
-    this._popup.forEach((popup) => {
-      popup.classList.remove("popup_is-opened");
-    });
+    this._popup.classList.remove("popup_is-opened");
     document.removeEventListener("keydown", this._handleEscClose);
   }
 
@@ -30,7 +26,5 @@ export default class Popup {
         this.close();
       }
     });
-
-    // nota: el boton de cerrar (X) lo manejo en index.js para poder agregar cosas como resetValidation
   }
 }
