@@ -4,8 +4,9 @@ import PopupWithForm from "../components/PopupWithForm.js";
 import PopupWithImage from "../components/PopupWithImage.js";
 import Section from "../components/Section.js";
 import UserInfo from "../components/UserInfo.js";
+import { api } from "../components/API.js";
 
-const initialCards = [
+/*const initialCards = [
   {
     name: "Valle de Yosemite",
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
@@ -30,7 +31,23 @@ const initialCards = [
     name: "Lago di Braies",
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lago.jpg",
   },
-];
+];*/
+
+api.cardsData().then((data) => {
+  console.log(data);
+  const defaultCard = new Section(
+    {
+      items: data,
+      renderer: (item) => {
+        const card = new Card(item, "#card-template", handleImageClick);
+        const cardElement = card.createCard();
+        defaultCard.addItem(cardElement);
+      },
+    },
+    cardContainer,
+  );
+  defaultCard.renderer();
+});
 
 const validationConfig = {
   inputSelector: ".popup__input",
@@ -84,7 +101,7 @@ const handleOpenProfileModal = () => {
 const profileFormPopup = new PopupWithForm(
   fillProfileForm,
   editProfilePopup,
-  handleOpenProfileModal
+  handleOpenProfileModal,
 );
 const cardFormPopup = new PopupWithForm(cardInfoObject, cardPopup);
 const imagePopup = new PopupWithImage(imageViewPopup);
@@ -134,20 +151,6 @@ cardFormValidator.setEventListeners();
 imageClickPopup.addEventListener("click", () => {
   imagePopup.open();
 });
-
-const defaultCard = new Section(
-  {
-    items: initialCards,
-    renderer: (item) => {
-      const card = new Card(item, "#card-template", handleImageClick);
-      const cardElement = card.createCard();
-      defaultCard.addItem(cardElement);
-    },
-  },
-  cardContainer
-);
-
-defaultCard.renderer();
 
 function cardInfoObject(formData) {
   formData = { name: formData["place-name"], link: formData.link };
