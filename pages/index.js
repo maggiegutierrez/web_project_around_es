@@ -33,21 +33,21 @@ import { api } from "../components/API.js";
   },
 ];*/
 
-api.cardsData().then((data) => {
+/*api.cardsData().then((data) => {
   console.log(data);
-  const defaultCard = new Section(
+  const theDefaultCard = new Section(
     {
       items: data,
       renderer: (item) => {
         const card = new Card(item, "#card-template", handleImageClick);
         const cardElement = card.createCard();
-        defaultCard.addItem(cardElement);
+        theDefaultCard.addItem(cardElement);
       },
     },
     cardContainer,
   );
-  defaultCard.renderer();
-});
+  theDefaultCard.renderer();
+});*/
 
 const validationConfig = {
   inputSelector: ".popup__input",
@@ -152,9 +152,28 @@ imageClickPopup.addEventListener("click", () => {
   imagePopup.open();
 });
 
+let defaultCard;
+
+api.cardsData().then((data) => {
+  defaultCard = new Section(
+    {
+      items: data,
+      renderer: (item) => {
+        const card = new Card(item, "#card-template", handleImageClick);
+        const cardElement = card.createCard();
+        defaultCard.addItem(cardElement);
+      },
+    },
+    cardContainer,
+  );
+
+  defaultCard.renderer();
+});
+
 function cardInfoObject(formData) {
   formData = { name: formData["place-name"], link: formData.link };
   const card = new Card(formData, "#card-template", handleImageClick);
   const cardElement = card.createCard();
   defaultCard.addItem(cardElement);
+  console.log(defaultCard);
 }

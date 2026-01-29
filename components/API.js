@@ -5,7 +5,6 @@ export default class API {
   }
 
   async cardsData() {
-    console.log(this._baseURL);
     return fetch(this._baseURL + `/cards`, {
       headers: {
         authorization: this._token,
@@ -21,10 +20,15 @@ export default class API {
 
   async userData() {
     return fetch(this._baseURL + `/users/me`, {
+      method: "PATCH",
       headers: {
-        method: "PATCH",
         authorization: this._token,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        name: "Marie Skłodowska Curie",
+        about: "Física y Química",
+      }),
     }).then((res) => {
       if (res.ok) {
         return res.json();
@@ -35,7 +39,9 @@ export default class API {
   }
 }
 
-export const api = new API({
+const api = new API({
   baseURL: "https://around-api.es.tripleten-services.com/v1",
   token: "98bc7c1d-eb51-4075-89db-ccaa5c9b5069",
 });
+
+export { api };
