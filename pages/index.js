@@ -33,22 +33,6 @@ import { api } from "../components/API.js";
   },
 ];*/
 
-/*api.cardsData().then((data) => {
-  console.log(data);
-  const theDefaultCard = new Section(
-    {
-      items: data,
-      renderer: (item) => {
-        const card = new Card(item, "#card-template", handleImageClick);
-        const cardElement = card.createCard();
-        theDefaultCard.addItem(cardElement);
-      },
-    },
-    cardContainer,
-  );
-  theDefaultCard.renderer();
-});*/
-
 const validationConfig = {
   inputSelector: ".popup__input",
   submitButtonSelector: ".popup__button",
@@ -67,6 +51,7 @@ const profileForm = document.querySelector("#edit-profile-form");
 /*PROFILE VIEW*/
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
 
 const fillProfileForm = (profileData) => {
   const newUser = new UserInfo({ profileTitle, profileDescription });
@@ -123,7 +108,6 @@ plusButton.addEventListener("click", function () {
 });
 
 const handleImageClick = (title, link) => {
-  console.log(title, link);
   cardPopupTitle.textContent = title;
   imageClickPopup.alt = title;
   imageClickPopup.src = link;
@@ -152,9 +136,22 @@ imageClickPopup.addEventListener("click", () => {
   imagePopup.open();
 });
 
+api
+  .getUserData()
+  .then((data) => {
+    profileTitle.textContent = data.name;
+    profileImage.alt = data.name;
+    profileImage.src = data.avatar;
+    profileDescription.textContent = data.about;
+  })
+  .catch((err) => {
+    console.error("Error al cargar usuario:", err);
+  });
+
 let defaultCard;
 
-api.cardsData().then((data) => {
+api.getCardsData().then((data) => {
+  console.log(data);
   defaultCard = new Section(
     {
       items: data,
@@ -171,9 +168,16 @@ api.cardsData().then((data) => {
 });
 
 function cardInfoObject(formData) {
-  formData = { name: formData["place-name"], link: formData.link };
-  const card = new Card(formData, "#card-template", handleImageClick);
-  const cardElement = card.createCard();
-  defaultCard.addItem(cardElement);
-  console.log(defaultCard);
+  console.log(formData);
+  api
+    .postCardData({
+      name: formData["place-name"],
+      link: formData.link,
+    })
+    .then((data) => {
+      const card = new Card(data, "#card-template", handleImageClick);
+      const cardElement = card.createCard();
+      defaultCard.addItem(cardElement);
+      console.log(defaultCard);
+    });
 }

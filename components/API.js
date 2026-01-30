@@ -4,8 +4,21 @@ export default class API {
     this._token = token;
   }
 
-  async cardsData() {
-    return fetch(this._baseURL + `/cards`, {
+  getUserData() {
+    return fetch(this._baseURL + `/users/me`, {
+      headers: {
+        authorization: this._token,
+      },
+    }).then((res) => {
+      if (!res.ok) {
+        return Promise.reject(res.status);
+      }
+      return res.json();
+    });
+  }
+
+  getCardsData() {
+    return fetch(this._baseURL + `/cards/`, {
       headers: {
         authorization: this._token,
       },
@@ -18,7 +31,7 @@ export default class API {
     });
   }
 
-  async userData() {
+  patchUserData() {
     return fetch(this._baseURL + `/users/me`, {
       method: "PATCH",
       headers: {
@@ -26,8 +39,31 @@ export default class API {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: "Marie Skłodowska Curie",
+        name: "Maggie Skłodowska Curie",
         about: "Física y Química",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject(res.status);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
+  postCardData(data) {
+    return fetch(this._baseURL + `/cards/`, {
+      method: "POST",
+      headers: {
+        authorization: this._token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: data.name,
+        link: data.link,
       }),
     }).then((res) => {
       if (res.ok) {
