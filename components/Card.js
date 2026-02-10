@@ -3,8 +3,8 @@ export default class Card {
     this._title = data.name;
     this._link = data.link;
     this._templateSelector = templateSelector;
-
     this._handleCardClick = handleCardClick;
+    this._deletePopup = document.querySelector("#delete-popup");
   }
 
   _getTemplate() {
@@ -33,9 +33,9 @@ export default class Card {
   createCard() {
     this._element = this._getTemplate();
     this._cardImage = this._element.querySelector(".card__image");
-    this._deleteButton = this._element.querySelector(".card__delete-button"); //X-button
+    this._deleteButton = this._element.querySelector(".card__delete-button");
     this._cardTitle = this._element.querySelector(".card__title");
-    this._likeButton = this._element.querySelector(".card__like-button"); //<3-button
+    this._likeButton = this._element.querySelector(".card__like-button");
 
     this._cardTitle.textContent = this._title;
     this._cardImage.src = this._link;

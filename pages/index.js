@@ -6,33 +6,6 @@ import Section from "../components/Section.js";
 import UserInfo from "../components/UserInfo.js";
 import { api } from "../components/API.js";
 
-/*const initialCards = [
-  {
-    name: "Valle de Yosemite",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-  },
-  {
-    name: "Lago Louise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-  },
-  {
-    name: "Montañas Calvas",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_bald-mountains.jpg",
-  },
-  {
-    name: "Latemar",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_latemar.jpg",
-  },
-  {
-    name: "Parque Nacional de la Vanoise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_vanoise.jpg",
-  },
-  {
-    name: "Lago di Braies",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lago.jpg",
-  },
-];*/
-
 const validationConfig = {
   inputSelector: ".popup__input",
   submitButtonSelector: ".popup__button",
@@ -50,12 +23,55 @@ const profileForm = document.querySelector("#edit-profile-form");
 
 /*PROFILE VIEW*/
 const profileTitle = document.querySelector(".profile__title");
-const profileDescription = document.querySelector(".profile__description");
+const profileAbout = document.querySelector(".profile__about");
 const profileImage = document.querySelector(".profile__image");
 
-const fillProfileForm = (profileData) => {
-  const newUser = new UserInfo({ profileTitle, profileDescription });
-  newUser.setUserInfo(profileData);
+/*----AVATAR CONSTS----*/
+const editAvatarPopup = document.querySelector("#edit-profile-image-popup");
+const changeAvatarForm = document.querySelector("#edit-profile-image-form");
+const avatarEditButton = document.querySelector(".profile-avatar-edit-button");
+const avatarXButton = editAvatarPopup.querySelector(".popup__close");
+
+const newUser = new UserInfo({
+  profileTitle,
+  profileAbout,
+  profileImage,
+});
+
+const handleOpenProfileModal = () => {
+  return newUser.getUserInfo();
+};
+
+const fillProfileForm = (data) => {
+  const apiData = {
+    name: data.name,
+    about: data.about,
+  };
+
+  api
+    .patchUserData(apiData)
+    .then((dataUpdated) => {
+      newUser.setUserInfo(dataUpdated);
+      profileFormPopup.close();
+    })
+    .catch((err) => {
+      alert(`ERROR ON SET THE USER INFORMATION: ${err}`);
+    });
+};
+
+const avatarLink = (data) => {
+  const apiData = {
+    avatar: data.avatar,
+  };
+  api
+    .patchAvatar(apiData)
+    .then((avatarUpdated) => {
+      newUser.setUserInfo(avatarUpdated);
+      avatarFormPopup.close();
+    })
+    .catch((err) => {
+      alert(`ERROR ON SET AVATAR: ${err}`);
+    });
 };
 
 /*----CARD CONSTS----*/
@@ -65,10 +81,13 @@ const cardContainer = document.querySelector(".cards__list");
 const plusButton = document.querySelector(".profile__add-button");
 const cardPopup = document.querySelector("#new-card-popup");
 const closeCardButton = cardPopup.querySelector(".popup__close");
-const createCardButton = cardPopup.querySelector(".popup__button");
 const cardForm = cardPopup.querySelector("#new-card-form");
-const cardTitleInput = cardForm.querySelector(".popup__input_type_card-name");
-const cardCaptionInput = cardForm.querySelector(".popup__input_type_url");
+//const confirmDeleteCardPopup = document.querySelector("#delete-popup");
+/*const confirmDeleteButton = confirmDeleteCardPopup.querySelector(
+  ".popup__button_type_delete",
+);*/
+//const cardTitleInput = cardForm.querySelector(".popup__input_type_card-name");
+//const cardCaptionInput = cardForm.querySelector(".popup__input_type_url");
 /*CLICK IMAGE & BUTTONS*/
 const imageViewPopup = document.querySelector("#image-popup");
 const closeimageViewPopup = imageViewPopup.querySelector(".popup__close");
@@ -77,11 +96,16 @@ const cardPopupTitle = imageViewPopup.querySelector(".popup__caption");
 
 const profileFormValidator = new FormValidator(validationConfig, profileForm);
 const cardFormValidator = new FormValidator(validationConfig, cardForm);
+const avatarFormValidator = new FormValidator(
+  validationConfig,
+  changeAvatarForm,
+);
 
-const handleOpenProfileModal = () => {
-  const newUser = new UserInfo({ profileTitle, profileDescription });
-  return newUser.getUserInfo();
-};
+const avatarFormPopup = new PopupWithForm(
+  avatarLink,
+  editAvatarPopup,
+  handleOpenProfileModal,
+);
 
 const profileFormPopup = new PopupWithForm(
   fillProfileForm,
@@ -90,10 +114,23 @@ const profileFormPopup = new PopupWithForm(
 );
 const cardFormPopup = new PopupWithForm(cardInfoObject, cardPopup);
 const imagePopup = new PopupWithImage(imageViewPopup);
+/*const deleteCardPopup = new PopupWithConfirmation(
+  confirmDeleteCardPopup,
+  confirmDeleteButton,
+);*/
 
+profileFormPopup.setEventListeners();
 imagePopup.setEventListeners();
 cardFormPopup.setEventListeners();
-profileFormPopup.setEventListeners();
+avatarFormPopup.setEventListeners();
+//deleteCardPopup.setEventListeners();
+
+/*----LISTENERS TO OPEN----*/
+avatarEditButton.addEventListener("click", (evt) => {
+  evt.preventDefault();
+  avatarFormValidator.resetValidation();
+  avatarFormPopup.open();
+});
 
 editProfileButton.addEventListener("click", (evt) => {
   evt.preventDefault();
@@ -115,9 +152,17 @@ const handleImageClick = (title, link) => {
   imagePopup.open(title, link);
 };
 
-closeProfileButton.addEventListener("click", () => {
+/*----LISTENERS TO CLOSE----*/
+closeProfileButton.addEventListener("click", (evt) => {
+  evt.preventDefault();
   profileFormValidator.resetValidation();
   profileFormPopup.close();
+});
+
+avatarXButton.addEventListener("click", (evt) => {
+  evt.preventDefault();
+  avatarFormValidator.resetValidation();
+  avatarFormPopup.close();
 });
 
 closeCardButton.addEventListener("click", () => {
@@ -131,53 +176,38 @@ closeimageViewPopup.addEventListener("click", function () {
 
 profileFormValidator.setEventListeners();
 cardFormValidator.setEventListeners();
+avatarFormValidator.setEventListeners();
 
 imageClickPopup.addEventListener("click", () => {
   imagePopup.open();
 });
 
-api
-  .getUserData()
-  .then((data) => {
-    profileTitle.textContent = data.name;
-    profileImage.alt = data.name;
-    profileImage.src = data.avatar;
-    profileDescription.textContent = data.about;
-  })
-  .catch((err) => {
-    console.error("Error al cargar usuario:", err);
-  });
-
-let defaultCard;
-
-api.getCardsData().then((data) => {
-  console.log(data);
-  defaultCard = new Section(
-    {
-      items: data,
-      renderer: (item) => {
-        const card = new Card(item, "#card-template", handleImageClick);
-        const cardElement = card.createCard();
-        defaultCard.addItem(cardElement);
-      },
+const defaultCard = new Section(
+  {
+    renderer: (item) => {
+      const card = new Card(item, "#card-template", handleImageClick);
+      const cardElement = card.createCard();
+      defaultCard.addItem(cardElement);
     },
-    cardContainer,
-  );
+  },
+  cardContainer,
+);
 
-  defaultCard.renderer();
+api.getWebData().then(([userData, cardsData]) => {
+  newUser.setUserInfo(userData);
+  defaultCard.rendererItems(cardsData);
 });
 
 function cardInfoObject(formData) {
-  console.log(formData);
   api
-    .postCardData({
-      name: formData["place-name"],
-      link: formData.link,
-    })
+    .postCardData({ name: formData.placeName, link: formData.link })
     .then((data) => {
       const card = new Card(data, "#card-template", handleImageClick);
       const cardElement = card.createCard();
       defaultCard.addItem(cardElement);
-      console.log(defaultCard);
+      cardFormPopup.close();
+    })
+    .catch((err) => {
+      alert(`ERROR ON POST CARD DATA: ${err}`);
     });
 }
