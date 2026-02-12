@@ -83,34 +83,26 @@ export default class API {
     return fetch(this._baseURL + `/cards/` + _id, {
       method: "DELETE",
       headers: this._headers,
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
 
-        return Promise.reject(res.status);
-      })
-      .catch((err) => {
-        console.log(`ERROR HONEY: ${err}`);
-      });
+      return Promise.reject(res.status);
+    });
   }
 
   likeCard(cardId, isLiked) {
     return fetch(this._baseURL + `/cards/` + cardId + `/likes`, {
       method: isLiked ? "DELETE" : "PUT",
       headers: this._headers,
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
 
-        return Promise.reject(res.status);
-      })
-      .catch((err) => {
-        console.log(`ERROR HONEY: ${err}`);
-      });
+      return Promise.reject(res.status);
+    });
   }
 
   getWebData() {

@@ -1,16 +1,22 @@
 import Popup from "./Popup.js";
 
-class PopupWithConfirmation extends Popup {
-  constructor(popupSelector, confirmationButton) {
+export default class PopupWithConfirmation extends Popup {
+  constructor(popupSelector) {
     super(popupSelector);
-    this._confirmationButton = confirmationButton;
+    this._confirmationButton = popupSelector.querySelector(
+      ".popup__button_type_delete",
+    );
+  }
+
+  confirmAction(action) {
+    this._handleConfirm = action;
   }
 
   setEventListeners() {
     super.setEventListeners();
     this._confirmationButton.addEventListener("click", (evt) => {
       evt.preventDefault();
-      this._popup.close();
+      this._handleConfirm();
     });
   }
 }
