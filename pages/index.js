@@ -21,7 +21,7 @@ const fillProfileForm = (data) => {
     name: data.name,
     about: data.about,
   };
-
+  profileFormPopup.renderLoading(true);
   api
     .patchUserData(apiData)
     .then((dataUpdated) => {
@@ -30,6 +30,9 @@ const fillProfileForm = (data) => {
     })
     .catch((err) => {
       alert(`ERROR ON SET THE USER INFORMATION: ${err}`);
+    })
+    .finally(() => {
+      profileFormPopup.renderLoading(false);
     });
 };
 
@@ -37,6 +40,7 @@ const avatarLink = (data) => {
   const apiData = {
     avatar: data.avatar,
   };
+  avatarFormPopup.renderLoading(true);
   api
     .patchAvatar(apiData)
     .then((avatarUpdated) => {
@@ -45,6 +49,9 @@ const avatarLink = (data) => {
     })
     .catch((err) => {
       alert(`ERROR ON SET AVATAR: ${err}`);
+    })
+    .finally(() => {
+      avatarFormPopup.renderLoading(false);
     });
 };
 
@@ -202,6 +209,7 @@ const handleClicks = {
     deleteCardPopup.open();
 
     deleteCardPopup.confirmAction(() => {
+      deleteCardPopup.renderLoading(true);
       api
         .deleteCardData(card.getId())
         .then(() => {
@@ -210,6 +218,9 @@ const handleClicks = {
         })
         .catch((err) => {
           alert(`ERROR ON DELETE CARD: ${err}`);
+        })
+        .finally(() => {
+          deleteCardPopup.renderLoading(false);
         });
     });
   },
@@ -227,6 +238,7 @@ const defaultCard = new Section(
 );
 
 function cardInfoObject(formData) {
+  cardFormPopup.renderLoading(true, "Creando...");
   api
     .postCardData({ name: formData.placeName, link: formData.link })
     .then((data) => {
@@ -237,6 +249,9 @@ function cardInfoObject(formData) {
     })
     .catch((err) => {
       alert(`ERROR ON POST CARD DATA: ${err}`);
+    })
+    .finally(() => {
+      cardFormPopup.renderLoading(false);
     });
 }
 
